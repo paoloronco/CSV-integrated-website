@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CSV-integrated-website — Demo</title>
+  <style>
+    :root{--bg:#0b1020;--card:#141a2e;--muted:#8fa3c7;--text:#eaf1ff;--accent:#5ea0ff;--border:#24304f}
+    html,body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0}
+    .wrap{max-width:900px;margin:48px auto;padding:0 20px}
+    h1{font-size:30px;margin:0 0 10px}
+    p.muted{color:var(--muted);margin:0 0 20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}
+    .card h2{margin:0 0 8px;font-size:20px}
+    a.btn{display:inline-block;margin-top:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:#0e152b;color:var(--text);text-decoration:none}
+    a.btn:hover{border-color:var(--accent)}
+    code{background:#0e152b;border:1px solid var(--border);padding:2px 6px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>CSV Data Table Demo — Inline & External</h1>
+    <p class="muted">Choose a demo:</p>
+    <div class="grid">
+      <div class="card">
+        <h2>Inline CSV</h2>
+        <p>Self‑contained page. The CSV is embedded inside the HTML. Works when opened directly.</p>
+        <a class="btn" href="./inline-csv/CSV-integrated-website.html">Open Inline Demo →</a>
+      </div>
+      <div class="card">
+        <h2>External CSV</h2>
+        <p>Loads <code>./mock-data.csv</code> from the same folder via <code>fetch()</code>. Requires a server (Pages/Vercel).</p>
+        <a class="btn" href="./external-csv/csv-table-external.html">Open External Demo →</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
