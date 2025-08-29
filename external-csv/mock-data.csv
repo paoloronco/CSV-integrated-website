@@ -1,0 +1,13 @@
+ID,Name,Category,Price,Link,Status,Owner,Priority,Tags,Created_At,Updated_At,Region,Notes
+1001,Onboarding Campaign,Marketing,"€2,500",https://example.com/items/1001,Active,Ada Lovelace,High,email;welcome,2025-01-15,2025-08-01,EU,Phase 2 live
+1002,Mobile App v2.1,Product,"€18,000",https://example.com/items/1002,In Review,Grace Hopper,High,release;ios;android,2025-03-02,2025-08-12,US,Pending QA sign-off
+1003,Customer Survey Q3,Research,€800,https://example.com/items/1003,Planned,Alan Turing,Medium,survey;nps,2025-07-01,2025-08-20,EU,Need translations
+1004,Data Pipeline Refresh,Engineering,"€12,300",https://example.com/items/1004,Active,Katherine Johnson,High,etl;dataops,2025-04-11,2025-08-22,APAC,Nightly runs stable
+1005,Website Redesign,Design,"€7,900",https://example.com/items/1005,Blocked,Margaret Hamilton,High,ux;ui;web,2025-05-06,2025-08-08,EU,Waiting on assets
+1006,Vendor Contract 2025,Operations,€0,https://example.com/items/1006,Signed,Tim Berners-Lee,Low,legal;contract,2025-02-20,2025-07-30,US,Auto-renews yearly
+1007,Security Audit,Security,"€5,500",https://example.com/items/1007,Active,Whitfield Diffie,Medium,audit;iso27001,2025-06-01,2025-08-18,EU,Findings due next sprint
+1008,Quarterly Report Q2,Finance,€0,https://example.com/items/1008,Completed,Mary Jackson,Medium,reporting;board,2025-07-05,2025-08-05,US,Shared with stakeholders
+1009,Support Playbook,Support,"€1,200",https://example.com/items/1009,In Review,Radia Perlman,Low,docs;training,2025-07-22,2025-08-25,EU,Needs screenshots
+1010,Data Residency EU,Compliance,"€3,400",https://example.com/items/1010,Active,Claude Shannon,High,privacy;gdpr,2025-03-28,2025-08-21,EU,Mapping vendors
+1011,SEO Backlog,Growth,€600,https://example.com/items/1011,Planned,Linus Torvalds,Low,seo;content,2025-08-01,2025-08-27,US,Awaiting keyword list
+1012,Hackathon 2025,People,"€4,000",https://example.com/items/1012,Planned,Hedy Lamarr,Medium,event;innovation,2025-09-10,2025-09-10,APAC,Venue tentative

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CSV Data Table Demo</title>
+  <style>
+    :root{
+      --bg:#0b0c10; --card:#111318; --text:#e6e8ec; --muted:#aab0bb; --accent:#7aa2ff; --accent-2:#57d2a3;
+      --border:#1d2030; --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f5f7fb; --card:#ffffff; --text:#0f172a; --muted:#5b6472; --accent:#2b61ff; --accent-2:#10b981; --border:#e5e7eb; --shadow:0 10px 24px rgba(2,6,23,.06); }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font: 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text); background:linear-gradient(180deg,var(--bg),#0a1020 40%,var(--bg));
+      min-height:100dvh; display:flex; align-items:start; justify-content:center; padding:28px;
+    }
+    .app{
+      width:min(1100px,100%); background:var(--card); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    header{
+      padding:22px 22px 10px; display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      border-bottom:1px solid var(--border);
+    }
+    h1{font-size:20px; margin:0; letter-spacing:.2px}
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; }
+    .control{
+      background:#0f1220; border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:12px;
+      display:flex; align-items:center; gap:8px;
+    }
+    @media (prefers-color-scheme: light){ .control{background:#f9fafb} }
+    .control input[type="search"]{ all:unset; width:220px; }
+    .control select, .control button, .control input[type="file"]{
+      background:transparent; border:none; color:inherit; font:inherit; cursor:pointer;
+    }
+    .control select{ cursor:pointer }
+    .control button{
+      padding:0; cursor:pointer; border-radius:8px; background:linear-gradient(180deg,var(--accent),#355bff);
+      color:white; padding:10px 14px; border:none;
+    }
+    .control button.secondary{
+      background:linear-gradient(180deg,var(--accent-2),#0aa77c); color:#062016;
+    }
+    .table-wrap{ width:100%; overflow:auto; }
+    table{ width:100%; border-collapse:separate; border-spacing:0; }
+    thead th{
+      position:sticky; top:0; background:linear-gradient(180deg,#121626, #0f1425); color:#d9e1ff; z-index:1;
+      text-align:left; font-weight:600; padding:12px 14px; border-bottom:1px solid var(--border); white-space:nowrap;
+      cursor:pointer; user-select:none;
+    }
+    @media (prefers-color-scheme: light){
+      thead th{ background:#f1f5ff; color:#13215d }
+    }
+    tbody td{ padding:12px 14px; border-bottom:1px solid var(--border); vertical-align:top; }
+    tbody tr:nth-child(even){ background:rgba(255,255,255,.02) }
+    tbody tr:hover{ background:rgba(122,162,255,.08) }
+    .badge{ font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:rgba(122,162,255,.12) }
+    .actions{ padding:12px 22px; display:flex; align-items:center; justify-content:space-between; gap:10px }
+    .pagination{ display:flex; gap:8px; align-items:center }
+    .pagination button{
+      border:none; padding:8px 10px; border-radius:8px; background:#152039; color:#d8e0ff; cursor:pointer;
+    }
+    @media (prefers-color-scheme: light){
+      .pagination button{ background:#eef2ff; color:#1f2a5a }
+    }
+    a.link{ color:var(--accent); text-decoration:none }
+    a.link:hover{ text-decoration:underline }
+    .sr-only{ position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+  <header>
+    <h1>CSV Data Table Demo</h1>
+    <div class="controls">
+      <label class="control" title="Search across all columns">
+        🔎 <input id="search" type="search" placeholder="Search… (name, category, tags…)" />
+      </label>
+      <label class="control" title="Rows per page">
+        Rows:
+        <select id="page-size">
+          <option>5</option>
+          <option selected>10</option>
+          <option>20</option>
+          <option>50</option>
+        </select>
+      </label>
+      <button class="control secondary" id="export">⬇️ Export filtered to CSV</button>
+    </div>
+  </header>
+
+
+    <div class="table-wrap">
+      <table id="table" aria-describedby="hint">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <div id="hint" class="muted">Tip: click column headers to sort ↑↓</div>
+      <div class="pagination">
+        <button id="prev">◀︎</button>
+        <span id="page-info" class="badge">Page 1/1</span>
+        <button id="next">▶︎</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- === INTEGRATED CSV: replace the content below with your data ================== -->
+  <script id="csv-data" type="text/plain">
+ID,Name,Category,Price,Link,Status,Owner,Priority,Tags,Created_At,Updated_At,Region,Notes
+1001,Onboarding Campaign,Marketing,"€2,500",https://example.com/items/1001,Active,Ada Lovelace,High,email;welcome,2025-01-15,2025-08-01,EU,Phase 2 live
+1002,Mobile App v2.1,Product,"€18,000",https://example.com/items/1002,In Review,Grace Hopper,High,release;ios;android,2025-03-02,2025-08-12,US,Pending QA sign-off
+1003,Customer Survey Q3,Research,€800,https://example.com/items/1003,Planned,Alan Turing,Medium,survey;nps,2025-07-01,2025-08-20,EU,Need translations
+1004,Data Pipeline Refresh,Engineering,"€12,300",https://example.com/items/1004,Active,Katherine Johnson,High,etl;dataops,2025-04-11,2025-08-22,APAC,Nightly runs stable
+1005,Website Redesign,Design,"€7,900",https://example.com/items/1005,Blocked,Margaret Hamilton,High,ux;ui;web,2025-05-06,2025-08-08,EU,Waiting on assets
+1006,Vendor Contract 2025,Operations,€0,https://example.com/items/1006,Signed,Tim Berners-Lee,Low,legal;contract,2025-02-20,2025-07-30,US,Auto-renews yearly
+1007,Security Audit,Security,"€5,500",https://example.com/items/1007,Active,Whitfield Diffie,Medium,audit;iso27001,2025-06-01,2025-08-18,EU,Findings due next sprint
+1008,Quarterly Report Q2,Finance,€0,https://example.com/items/1008,Completed,Mary Jackson,Medium,reporting;board,2025-07-05,2025-08-05,US,Shared with stakeholders
+1009,Support Playbook,Support,"€1,200",https://example.com/items/1009,In Review,Radia Perlman,Low,docs;training,2025-07-22,2025-08-25,EU,Needs screenshots
+1010,Data Residency EU,Compliance,"€3,400",https://example.com/items/1010,Active,Claude Shannon,High,privacy;gdpr,2025-03-28,2025-08-21,EU,Mapping vendors
+1011,SEO Backlog,Growth,€600,https://example.com/items/1011,Planned,Linus Torvalds,Low,seo;content,2025-08-01,2025-08-27,US,Awaiting keyword list
+1012,Hackathon 2025,People,"€4,000",https://example.com/items/1012,Planned,Hedy Lamarr,Medium,event;innovation,2025-09-10,2025-09-10,APAC,Venue tentative
+  </script>
+  <!-- ========================================================================= -->
+
+  <script>
+    // --------- CSV PARSER (robust; handles quotes, commas, and CRLF) ---------
+    function parseCSV(text){
+      const rows=[], row=[], len=text.length;
+      let i=0, cur='', inQuotes=false;
+      const pushCell=()=>{ row.push(cur); cur=''; };
+      const pushRow=()=>{ if(row.length || cur!==''){ pushCell(); rows.push(row.slice()); row.length=0; } };
+
+      while(i<len){
+        const c=text[i];
+        if(inQuotes){
+          if(c==='"'){
+            if(text[i+1]==='"'){ cur+='"'; i++; } else { inQuotes=false; }
+          } else { cur+=c; }
+        } else {
+          if(c==='"'){ inQuotes=true; }
+          else if(c===','){ pushCell(); }
+          else if(c==='\n'){ pushRow(); }
+          else if(c==='\r'){ /* ignore CR (handle CRLF) */ }
+          else { cur+=c; }
+        }
+        i++;
+      }
+      pushRow();
+      return rows.filter(r => r.length && !(r.length===1 && r[0]===''));
+    }
+
+    // --------- UTILITIES ---------
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    const isURL = v => /^https?:\/\//i.test(v || '');
+    const toCSV = (arr) => arr.map(r => r.map(c => {
+      const v = (c ?? '').toString();
+      return /[",\n]/.test(v) ? `"${v.replace(/"/g,'""')}"` : v;
+    }).join(',')).join('\n');
+
+    // --------- STATE ---------
+    let data = [];       // [ [header...], [row...], ... ]
+    let view = [];       // righe senza header, filtrate
+    let headers = [];
+    let sortCol = 0, sortDir = 1; // 1 asc, -1 desc
+    let page = 1, size = parseInt($('#page-size').value,10);
+
+    function loadCSVText(text){
+      const parsed = parseCSV(text);
+      headers = parsed.shift() || [];
+      data = parsed;
+      applySearch($('#search').value.trim());
+    }
+
+    // --------- RENDER ---------
+    function render(){
+      // sort
+      if(headers.length){
+        view.sort((a,b)=>{
+          const A=(a[sortCol]||'').toString().toLowerCase();
+          const B=(b[sortCol]||'').toString().toLowerCase();
+          const nA = parseFloat(A.replace(/[^\d.-]/g,'')), nB = parseFloat(B.replace(/[^\d.-]/g,''));
+          if(!Number.isNaN(nA) && !Number.isNaN(nB) && (/\d/.test(A) || /\d/.test(B))){
+            return (nA-nB)*sortDir;
+          }
+          return (A>B?1:A<B?-1:0)*sortDir;
+        });
+      }
+
+      // pagination
+      size = parseInt($('#page-size').value,10);
+      const total = Math.max(1, Math.ceil(view.length/size));
+      page = Math.min(Math.max(1,page), total);
+      const start = (page-1)*size, end = start+size;
+      const slice = view.slice(start,end);
+
+      // head
+      const thead = $('#table thead'); thead.innerHTML='';
+      const trh = document.createElement('tr');
+      headers.forEach((h,idx)=>{
+        const th = document.createElement('th');
+        th.textContent = h || `Col ${idx+1}`;
+        th.title = 'Sort by ' + (h||`Col ${idx+1}`);
+        th.addEventListener('click', ()=>{
+          if(sortCol===idx){ sortDir*=-1; } else { sortCol=idx; sortDir=1; }
+          render();
+        });
+        if(idx===sortCol){ th.insertAdjacentText('beforeend', sortDir>0?'  ↑':'  ↓'); }
+        trh.appendChild(th);
+      });
+      thead.appendChild(trh);
+
+      // body
+      const tbody = $('#table tbody'); tbody.innerHTML='';
+      slice.forEach(r=>{
+        const tr = document.createElement('tr');
+        r.forEach((cell,ci)=>{
+          const td = document.createElement('td');
+          if(isURL(cell)){
+            const a = document.createElement('a'); a.href = cell; a.textContent = 'Open link'; a.target='_blank'; a.rel='noopener'; a.className='link';
+            td.appendChild(a);
+          } else {
+            td.textContent = cell;
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      // page info
+      $('#page-info').textContent = `Page ${page}/${total} • ${view.length} rows`;
+      $('#prev').disabled = page<=1;
+      $('#next').disabled = page>=total;
+    }
+
+    function applySearch(q){
+      const ql = q.toLowerCase();
+      view = data.filter(r => !ql || r.some(c => (c||'').toString().toLowerCase().includes(ql)));
+      page = 1;
+      render();
+    }
+
+    // --------- UI EVENTS ---------
+    $('#search').addEventListener('input', e => applySearch(e.target.value));
+    $('#page-size').addEventListener('change', render);
+    $('#prev').addEventListener('click', ()=>{ page--; render(); });
+    $('#next').addEventListener('click', ()=>{ page++; render(); });
+    $('#export').addEventListener('click', ()=>{
+      const csvOut = toCSV([headers, ...view]);
+      const blob = new Blob([csvOut], {type:'text/csv;charset=utf-8;'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'filtered-table.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // --------- BOOTSTRAP ---------
+    loadCSVText(document.getElementById('csv-data').textContent.trim());
+  </script>
+</body>
+</html>
